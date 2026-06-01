@@ -27,7 +27,7 @@ struct RootView: View {
     @ViewBuilder private var content: some View {
         switch tab {
         case .today: TodayView()
-        case .problems: ComingSoon(title: "Problems")
+        case .problems: ProblemsView()
         case .stats: ComingSoon(title: "Stats")
         }
     }
