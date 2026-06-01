@@ -9,10 +9,16 @@ struct RootView: View {
     @State private var tab: AppTab = .today
 
     var body: some View {
-        VStack(spacing: 0) {
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            BottomNav(active: $tab)
+        Group {
+            if store.needsOnboarding {
+                OnboardingView()
+            } else {
+                VStack(spacing: 0) {
+                    content
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    BottomNav(active: $tab)
+                }
+            }
         }
         .background(WF.bg.ignoresSafeArea())
         .environmentObject(store)

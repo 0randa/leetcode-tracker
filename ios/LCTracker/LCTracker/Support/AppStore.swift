@@ -15,7 +15,18 @@ final class AppStore: ObservableObject {
     /// Cards logged during this session (shown as done before the next reload).
     @Published private(set) var logged: Set<Int> = []
 
+    /// First-run onboarding gate (rate the 18 categories). Local UX state —
+    /// the backend stores the ratings as priors but exposes no "done" flag.
+    @Published var needsOnboarding: Bool = !UserDefaults.standard.bool(forKey: "onboardingComplete")
+
+    private static let onboardingKey = "onboardingComplete"
+
     private let api = APIClient.shared
+
+    func completeOnboarding() {
+        UserDefaults.standard.set(true, forKey: Self.onboardingKey)
+        needsOnboarding = false
+    }
 
     func loadToday() async {
         loadingToday = true
