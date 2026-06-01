@@ -1,0 +1,8 @@
+CLAUDE.md
+.claude/
+
+# Handoff documents — local only, not committed (matches any directory)
+HANDOFF*.md
+handoff*.md
+*-handoff.md
+*-HANDOFF.md
