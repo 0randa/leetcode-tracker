@@ -63,6 +63,7 @@ struct BottomNav: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("tab.\(t.label)")
             }
         }
         .padding(.top, 8)

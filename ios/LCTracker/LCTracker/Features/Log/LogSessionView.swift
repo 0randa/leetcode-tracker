@@ -82,6 +82,7 @@ struct LogSessionView: View {
             Btn(title: "Cancel", variant: .outline, size: .lg) { dismiss() }
             Btn(title: saving ? "Saving…" : "Save & return", variant: .primary, size: .lg,
                 full: true, icon: .check) { Task { await save() } }
+                .accessibilityIdentifier("log.save")
         }
         .padding(.horizontal, 16).padding(.vertical, 12)
         .overlay(alignment: .top) { Rectangle().fill(WF.line2).frame(height: 1) }
@@ -105,6 +106,7 @@ struct LogSessionView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(outcomeLabel == o ? WF.ink : WF.line, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("outcome.\(o)")
                 }
             }
         }

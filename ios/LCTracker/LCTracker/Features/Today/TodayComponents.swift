@@ -151,12 +151,14 @@ struct ProblemCard: View {
         } else if inProgress {
             HStack(spacing: 8) {
                 Btn(title: "Log result", variant: .primary, size: .sm, full: true, icon: .check, action: onLog)
+                    .accessibilityIdentifier("card.log")
                 Btn(title: "Reopen", variant: .outline, size: .sm, icon: .ext, action: onOpen)
             }
         } else {
             HStack(spacing: 8) {
                 Btn(title: "Open in LeetCode", variant: .primary, size: .sm, full: true, icon: .ext, action: onOpen)
                 Btn(title: "Log", variant: .outline, size: .sm, action: onLog)
+                    .accessibilityIdentifier("card.log")
             }
         }
     }
