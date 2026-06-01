@@ -38,7 +38,9 @@ final class APIClient {
         let configured = [env, plist].compactMap { $0 }.first { !$0.isEmpty }
         self.baseURL = URL(string: configured ?? "http://localhost:8080")!
         let cfg = URLSessionConfiguration.default
-        cfg.timeoutIntervalForRequest = 15
+        // Generous so a free-tier host cold-starting from idle (~30–60s) doesn't
+        // time out the first request after a period of inactivity.
+        cfg.timeoutIntervalForRequest = 60
         self.session = URLSession(configuration: cfg)
     }
 
