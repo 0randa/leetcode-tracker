@@ -19,8 +19,12 @@ enum APIError: LocalizedError {
 final class APIClient {
     static let shared = APIClient()
 
-    /// Simulator reaches a locally-running backend at localhost:8080.
-    /// Override with the LCTRACKER_API_BASE env var (e.g. a hosted URL).
+    /// Where the backend lives. Resolution order:
+    ///   1. `LCTRACKER_API_BASE` env var (set in the Xcode scheme for dev runs),
+    ///   2. the `APIBaseURL` Info.plist key (so untethered device installs work),
+    ///   3. `http://localhost:8080` (simulator default).
+    /// On a physical device set `APIBaseURL` to the Mac's LAN IP (same WiFi) or a
+    /// hosted HTTPS URL once deployed.
     private let baseURL: URL
 
     private let session: URLSession
@@ -29,7 +33,10 @@ final class APIClient {
 
     init() {
         let env = ProcessInfo.processInfo.environment["LCTRACKER_API_BASE"]
-        self.baseURL = URL(string: env ?? "http://localhost:8080")!
+        let plist = (Bundle.main.object(forInfoDictionaryKey: "APIBaseURL") as? String)?
+            .trimmingCharacters(in: .whitespaces)
+        let configured = [env, plist].compactMap { $0 }.first { !$0.isEmpty }
+        self.baseURL = URL(string: configured ?? "http://localhost:8080")!
         let cfg = URLSessionConfiguration.default
         cfg.timeoutIntervalForRequest = 15
         self.session = URLSession(configuration: cfg)

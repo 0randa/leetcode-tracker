@@ -33,6 +33,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<!-- Dev: backend on the Mac's LAN IP (same WiFi). Override per-run with the
+	     LCTRACKER_API_BASE env var; replace with the hosted HTTPS URL at deploy. -->
+	<key>APIBaseURL</key>
+	<string>http://192.168.1.112:8080</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>IBMPlexSans-VF.ttf</string>
