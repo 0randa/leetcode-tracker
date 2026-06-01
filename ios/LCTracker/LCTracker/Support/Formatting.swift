@@ -41,6 +41,18 @@ enum DateFmt {
         return monthDay(d)
     }
 
+    /// Single-letter weekday initials for the last `n` UTC days, oldest → newest
+    /// ending today — matching the backend's weekly window order.
+    static func lastNWeekdayInitials(_ n: Int) -> [String] {
+        guard n > 0 else { return [] }
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = utc
+        let today = cal.startOfDay(for: Date())
+        return (0..<n).reversed().compactMap { back in
+            cal.date(byAdding: .day, value: -back, to: today)
+        }.map { String(fmt($0, "EEE").prefix(1)) }
+    }
+
     private static func fmt(_ date: Date, _ pattern: String) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")

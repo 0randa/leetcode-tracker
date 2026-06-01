@@ -6,7 +6,18 @@ enum AppTab: Hashable { case today, problems, stats }
 /// A reserved ⚙ gear slot lives in each screen header (Settings not built).
 struct RootView: View {
     @StateObject private var store = AppStore()
-    @State private var tab: AppTab = .today
+    @State private var tab: AppTab = RootView.launchTab()
+
+    /// Optional launch-argument hook for screenshots / UI tests:
+    /// `-initialTab problems|stats` (lands in the argument-domain defaults).
+    /// Absent in normal use → Today.
+    private static func launchTab() -> AppTab {
+        switch UserDefaults.standard.string(forKey: "initialTab") {
+        case "problems": return .problems
+        case "stats": return .stats
+        default: return .today
+        }
+    }
 
     var body: some View {
         Group {
@@ -28,18 +39,8 @@ struct RootView: View {
         switch tab {
         case .today: TodayView()
         case .problems: ProblemsView()
-        case .stats: ComingSoon(title: "Stats")
+        case .stats: StatsView()
         }
-    }
-}
-
-/// Placeholder for tabs implemented in later slices.
-struct ComingSoon: View {
-    let title: String
-    var body: some View {
-        VStack { Text(title).font(Typo.sans(17, 700)).foregroundStyle(WF.ink) }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(WF.bg)
     }
 }
 
