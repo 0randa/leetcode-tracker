@@ -2,7 +2,7 @@
 
 ## What it is
 
-A native mobile app, on iOS and Android, for tracking LeetCode practice and deciding what to work on each day. It started as a fix for one specific, annoying problem: doing NeetCode 150 on and off, losing the thread every time life got busy, and coming back with no idea which problems had gone stale.
+A web app for tracking LeetCode practice and deciding what to work on each day. It started as a fix for one specific, annoying problem: doing NeetCode 150 on and off, losing the thread every time life got busy, and coming back with no idea which problems had gone stale.
 
 Instead of another checklist, it works like a spaced repetition system for algorithm problems. Each day it hands you a short, fixed set of work: two problems to review and one new one. You solve them on LeetCode as usual, then tell the app how it went. Over time it learns which topics you're shaky on and keeps those in rotation.
 
@@ -44,21 +44,23 @@ Comfort drives the review interval. The intervals climb a fixed ladder, roughly 
 
 ## Architecture
 
-Going native changes the shape of the project. A web app could have been one deployable thing that served pages and talked to the database itself. Phone apps can't do that, so they call a backend over an API, and the backend owns the database and all the logic. There's a client and a server from the first commit, not bolted on later.
+The app is split into a thin client and an authoritative backend, and that split has been there since the first commit, not bolted on later. The backend owns everything that matters — the scheduling logic, the comfort scoring, the LeetCode catalog, and the database. The client renders state and sends user actions; it never touches the database directly. That keeps the rules in one place no matter how many clients there are.
 
-### The first version
+### The stack
 
-Two thin native clients and one backend. The iOS app is Swift with SwiftUI, the Android app is Kotlin with Jetpack Compose, and both call a backend that holds the scheduling logic, the comfort scoring, and the database. No auth and a single user to start, but the client/server split is baked in from day one, because a phone app has nowhere to keep a database.
+The client is a **web app** built with SvelteKit and deployed on Vercel. The browser only ever calls SvelteKit's own server routes, which proxy through to the backend — so the backend's address (and, later, login sessions) stay server-side and there's no cross-origin wiring to manage. The backend is Kotlin with Spring Boot, holding the logic and the database, with PostgreSQL on Neon behind it.
 
-If you want to ship sooner, build one platform first (whichever phone you carry day to day) and add the second once the loop works end to end. The backend doesn't care how many clients it has.
+There's also an **iOS client** (Swift + SwiftUI) from the project's first phase. It runs against the same backend and proved out the full loop on a real device; the web app is now the primary direction, since sharing a URL beats sideloading an app. The backend doesn't care how many clients it has — the web app and the iOS app are just two front ends over the same API.
+
+No auth and a single user to start. The client/server split exists from day one because the logic and the data are deliberately kept out of the client, not because any one client demands it.
 
 | Piece | Choice | Reason |
 |---|---|---|
-| iOS client | Swift + SwiftUI | Native, current iOS UI |
-| Android client | Kotlin + Jetpack Compose | Native, current Android UI |
-| Backend | Kotlin + Spring Boot | Owns the logic and the database, and shares a language with the Android app |
+| Web client | SvelteKit + TypeScript, on Vercel | Shared via a URL, no install; talks to the backend through its own server layer |
+| iOS client | Swift + SwiftUI | Original native client from phase one; runs on the same backend |
+| Backend | Kotlin + Spring Boot | Owns the scheduling logic, comfort scoring, and the database |
 | Database | PostgreSQL on Neon | Serverless, free tier, sits behind the backend |
-| Hosting | Railway, Render, or Fly.io for the backend; the App Store and Play Store for the apps | A containerized API plus the usual stores |
+| Hosting | Vercel for the web app, Render for the backend | Free-tier web host plus a containerized API |
 
 A one-time job on the backend pulls the problem catalog from LeetCode's GraphQL endpoint into Postgres, with the NeetCode 150 marked.
 
@@ -72,27 +74,26 @@ Six tables cover it:
 - `user_topic_comfort`: the per-topic self ratings from onboarding
 - `review_sessions`: one row per attempt (outcome, peeked, time, complexity, timestamp), kept as history so comfort can be recomputed and the timelines drawn later
 
-Comfort lives on `user_progress` as a computed value, not something the user edits directly. Only the backend reads and writes these tables; the apps see them through the API.
+Comfort lives on `user_progress` as a computed value, not something the user edits directly. Only the backend reads and writes these tables; the clients see them through the API.
 
 ### Shape of it
 
 ```
-  iOS  (Swift / SwiftUI) --------\
+  Web  (SvelteKit on Vercel) ---\
                                   >--- Backend API  (Kotlin / Spring Boot) --- Postgres (Neon)
-  Android  (Kotlin / Compose) ---/        scheduling, comfort scoring, seeding
+  iOS  (Swift / SwiftUI) --------/        scheduling, comfort scoring, seeding
                                                  |
-                                          LeetCode GraphQL  (seed + live user stats)
+                                          LeetCode GraphQL  (seed)
 ```
 
 ### Where it goes next
 
-The heavier features come after the basic loop works on one platform:
+The heavier features come after the basic loop is solid:
 
-- The second native app, if you shipped one platform first.
-- Accounts through GitHub or Google, with the OAuth handled by the backend, filling the `user_id` the schema already leaves room for.
-- Push notifications for review reminders. This is one place going native pays off: real push (APNs on iOS, FCM on Android) is the natural bridge from "your phone says three are due" to sitting down at your computer to solve them, which is where the actual work happens.
+- Accounts through GitHub or Google, with the OAuth handled by the backend, filling the `user_id` the schema already leaves room for. This is what turns it from a single-user tool into something other people can use with their own data.
 - Weekly, monthly, and yearly views of progress that surface strong and weak topics from the session history.
+- Review reminders, so "three are due today" reaches you instead of waiting for you to check.
 
-### Out of scope for the first version
+### Out of scope for now
 
-Auth, analytics, notifications, and the second platform (if you start with one) are left out of the first version on purpose. They matter, but the daily loop has to work end to end first, and a finished small thing beats an unfinished big one.
+Accounts, deeper analytics, and reminders are left out on purpose until the daily loop is solid end to end. They matter, but a finished small thing beats an unfinished big one.
