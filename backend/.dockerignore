@@ -1,0 +1,9 @@
+build
+.gradle
+.kotlin
+.idea
+*.iml
+.env
+.git
+HELP.md
+README.md
