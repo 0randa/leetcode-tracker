@@ -8,23 +8,64 @@ struct TodayView: View {
 
     @State private var filter: String? = nil          // nil | "Review" | "New"
     @State private var logTarget: ProblemSummary? = nil
+    @State private var detailTarget: Int? = nil
+    @State private var showFind = UserDefaults.standard.bool(forKey: "presentFind")
+    @State private var toast: String? = nil
 
     var body: some View {
-        Group {
-            if let today = store.today {
-                loaded(today)
-            } else if store.loadingToday {
-                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let err = store.todayError {
-                errorView(err)
-            } else {
-                Color.clear
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                Group {
+                    if let today = store.today {
+                        loaded(today)
+                    } else if store.loadingToday {
+                        ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let err = store.todayError {
+                        errorView(err)
+                    } else {
+                        Color.clear
+                    }
+                }
+                LogFab { showFind = true }
+                    .padding(.trailing, 16).padding(.bottom, 16)
+                if let toast { toastView(toast) }
+            }
+            .background(WF.bg)
+            .navigationBarHidden(true)
+            .navigationDestination(item: $detailTarget) { id in
+                ProblemDetailView(problemId: id)
             }
         }
-        .background(WF.bg)
         .task { if store.today == nil { await store.loadToday() } }
         .sheet(item: $logTarget) { problem in
             LogSessionView(problem: problem) { await store.markLogged(problem.id) }
+        }
+        .sheet(isPresented: $showFind) {
+            OffScriptView { title in
+                await store.loadToday()
+                showToast("Logged \(title)")
+            }
+        }
+    }
+
+    private func toastView(_ text: String) -> some View {
+        HStack(spacing: 8) {
+            Icon(name: .check, size: 14, color: .white)
+            Text(text).font(Typo.sans(12.5, 600)).foregroundStyle(.white).lineLimit(1)
+        }
+        .padding(.horizontal, 14).padding(.vertical, 11)
+        .background(Capsule().fill(WF.ink))
+        .shadow(color: Color(hex: 0x14141e, alpha: 0.3), radius: 10, y: 5)
+        .padding(.bottom, 18)
+        .frame(maxWidth: .infinity)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    private func showToast(_ text: String) {
+        withAnimation(.easeOut(duration: 0.2)) { toast = text }
+        Task {
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            withAnimation(.easeIn(duration: 0.2)) { toast = nil }
         }
     }
 
@@ -58,7 +99,8 @@ struct TodayView: View {
                             opened: store.opened.contains(card.problem.id),
                             logged: store.logged.contains(card.problem.id),
                             onOpen: { open(card.problem) },
-                            onLog: { logTarget = card.problem }
+                            onLog: { logTarget = card.problem },
+                            onDetail: { detailTarget = card.problem.id }
                         )
                     }
                 }
