@@ -1,0 +1,604 @@
+{
+  "problems": [
+    {
+      "category": "Arrays & Hashing",
+      "slug": "contains-duplicate"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "valid-anagram"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "two-sum"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "group-anagrams"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "top-k-frequent-elements"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "encode-and-decode-strings"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "product-of-array-except-self"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "valid-sudoku"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "slug": "longest-consecutive-sequence"
+    },
+    {
+      "category": "Two Pointers",
+      "slug": "valid-palindrome"
+    },
+    {
+      "category": "Two Pointers",
+      "slug": "two-sum-ii-input-array-is-sorted"
+    },
+    {
+      "category": "Two Pointers",
+      "slug": "3sum"
+    },
+    {
+      "category": "Two Pointers",
+      "slug": "container-with-most-water"
+    },
+    {
+      "category": "Two Pointers",
+      "slug": "trapping-rain-water"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "best-time-to-buy-and-sell-stock"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "longest-substring-without-repeating-characters"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "longest-repeating-character-replacement"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "permutation-in-string"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "minimum-window-substring"
+    },
+    {
+      "category": "Sliding Window",
+      "slug": "sliding-window-maximum"
+    },
+    {
+      "category": "Stack",
+      "slug": "valid-parentheses"
+    },
+    {
+      "category": "Stack",
+      "slug": "min-stack"
+    },
+    {
+      "category": "Stack",
+      "slug": "evaluate-reverse-polish-notation"
+    },
+    {
+      "category": "Stack",
+      "slug": "daily-temperatures"
+    },
+    {
+      "category": "Stack",
+      "slug": "car-fleet"
+    },
+    {
+      "category": "Stack",
+      "slug": "largest-rectangle-in-histogram"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "binary-search"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "search-a-2d-matrix"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "koko-eating-bananas"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "find-minimum-in-rotated-sorted-array"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "search-in-rotated-sorted-array"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "time-based-key-value-store"
+    },
+    {
+      "category": "Binary Search",
+      "slug": "median-of-two-sorted-arrays"
+    },
+    {
+      "category": "Linked List",
+      "slug": "reverse-linked-list"
+    },
+    {
+      "category": "Linked List",
+      "slug": "merge-two-sorted-lists"
+    },
+    {
+      "category": "Linked List",
+      "slug": "linked-list-cycle"
+    },
+    {
+      "category": "Linked List",
+      "slug": "reorder-list"
+    },
+    {
+      "category": "Linked List",
+      "slug": "remove-nth-node-from-end-of-list"
+    },
+    {
+      "category": "Linked List",
+      "slug": "copy-list-with-random-pointer"
+    },
+    {
+      "category": "Linked List",
+      "slug": "add-two-numbers"
+    },
+    {
+      "category": "Linked List",
+      "slug": "find-the-duplicate-number"
+    },
+    {
+      "category": "Linked List",
+      "slug": "lru-cache"
+    },
+    {
+      "category": "Linked List",
+      "slug": "merge-k-sorted-lists"
+    },
+    {
+      "category": "Linked List",
+      "slug": "reverse-nodes-in-k-group"
+    },
+    {
+      "category": "Trees",
+      "slug": "invert-binary-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "maximum-depth-of-binary-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "diameter-of-binary-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "balanced-binary-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "same-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "subtree-of-another-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "lowest-common-ancestor-of-a-binary-search-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "binary-tree-level-order-traversal"
+    },
+    {
+      "category": "Trees",
+      "slug": "binary-tree-right-side-view"
+    },
+    {
+      "category": "Trees",
+      "slug": "count-good-nodes-in-binary-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "validate-binary-search-tree"
+    },
+    {
+      "category": "Trees",
+      "slug": "kth-smallest-element-in-a-bst"
+    },
+    {
+      "category": "Trees",
+      "slug": "construct-binary-tree-from-preorder-and-inorder-traversal"
+    },
+    {
+      "category": "Trees",
+      "slug": "binary-tree-maximum-path-sum"
+    },
+    {
+      "category": "Trees",
+      "slug": "serialize-and-deserialize-binary-tree"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "kth-largest-element-in-a-stream"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "last-stone-weight"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "k-closest-points-to-origin"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "kth-largest-element-in-an-array"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "task-scheduler"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "design-twitter"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "slug": "find-median-from-data-stream"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "subsets"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "combination-sum"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "combination-sum-ii"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "permutations"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "subsets-ii"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "generate-parentheses"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "word-search"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "palindrome-partitioning"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "letter-combinations-of-a-phone-number"
+    },
+    {
+      "category": "Backtracking",
+      "slug": "n-queens"
+    },
+    {
+      "category": "Tries",
+      "slug": "implement-trie-prefix-tree"
+    },
+    {
+      "category": "Tries",
+      "slug": "design-add-and-search-words-data-structure"
+    },
+    {
+      "category": "Tries",
+      "slug": "word-search-ii"
+    },
+    {
+      "category": "Graphs",
+      "slug": "number-of-islands"
+    },
+    {
+      "category": "Graphs",
+      "slug": "max-area-of-island"
+    },
+    {
+      "category": "Graphs",
+      "slug": "clone-graph"
+    },
+    {
+      "category": "Graphs",
+      "slug": "walls-and-gates"
+    },
+    {
+      "category": "Graphs",
+      "slug": "rotting-oranges"
+    },
+    {
+      "category": "Graphs",
+      "slug": "pacific-atlantic-water-flow"
+    },
+    {
+      "category": "Graphs",
+      "slug": "surrounded-regions"
+    },
+    {
+      "category": "Graphs",
+      "slug": "course-schedule"
+    },
+    {
+      "category": "Graphs",
+      "slug": "course-schedule-ii"
+    },
+    {
+      "category": "Graphs",
+      "slug": "graph-valid-tree"
+    },
+    {
+      "category": "Graphs",
+      "slug": "number-of-connected-components-in-an-undirected-graph"
+    },
+    {
+      "category": "Graphs",
+      "slug": "redundant-connection"
+    },
+    {
+      "category": "Graphs",
+      "slug": "word-ladder"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "network-delay-time"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "reconstruct-itinerary"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "min-cost-to-connect-all-points"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "swim-in-rising-water"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "alien-dictionary"
+    },
+    {
+      "category": "Advanced Graphs",
+      "slug": "cheapest-flights-within-k-stops"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "climbing-stairs"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "min-cost-climbing-stairs"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "house-robber"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "house-robber-ii"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "longest-palindromic-substring"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "palindromic-substrings"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "decode-ways"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "coin-change"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "maximum-product-subarray"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "word-break"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "longest-increasing-subsequence"
+    },
+    {
+      "category": "1-D DP",
+      "slug": "partition-equal-subset-sum"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "unique-paths"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "longest-common-subsequence"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "best-time-to-buy-and-sell-stock-with-cooldown"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "coin-change-ii"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "target-sum"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "interleaving-string"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "longest-increasing-path-in-a-matrix"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "distinct-subsequences"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "edit-distance"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "burst-balloons"
+    },
+    {
+      "category": "2-D DP",
+      "slug": "regular-expression-matching"
+    },
+    {
+      "category": "Greedy",
+      "slug": "maximum-subarray"
+    },
+    {
+      "category": "Greedy",
+      "slug": "jump-game"
+    },
+    {
+      "category": "Greedy",
+      "slug": "jump-game-ii"
+    },
+    {
+      "category": "Greedy",
+      "slug": "gas-station"
+    },
+    {
+      "category": "Greedy",
+      "slug": "hand-of-straights"
+    },
+    {
+      "category": "Greedy",
+      "slug": "merge-triplets-to-form-target-triplet"
+    },
+    {
+      "category": "Greedy",
+      "slug": "partition-labels"
+    },
+    {
+      "category": "Greedy",
+      "slug": "valid-parenthesis-string"
+    },
+    {
+      "category": "Intervals",
+      "slug": "insert-interval"
+    },
+    {
+      "category": "Intervals",
+      "slug": "merge-intervals"
+    },
+    {
+      "category": "Intervals",
+      "slug": "non-overlapping-intervals"
+    },
+    {
+      "category": "Intervals",
+      "slug": "meeting-rooms"
+    },
+    {
+      "category": "Intervals",
+      "slug": "meeting-rooms-ii"
+    },
+    {
+      "category": "Intervals",
+      "slug": "minimum-interval-to-include-each-query"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "rotate-image"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "spiral-matrix"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "set-matrix-zeroes"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "happy-number"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "plus-one"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "powx-n"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "multiply-strings"
+    },
+    {
+      "category": "Math & Geometry",
+      "slug": "detect-squares"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "single-number"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "number-of-1-bits"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "counting-bits"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "reverse-bits"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "missing-number"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "sum-of-two-integers"
+    },
+    {
+      "category": "Bit Manipulation",
+      "slug": "reverse-integer"
+    }
+  ]
+}
