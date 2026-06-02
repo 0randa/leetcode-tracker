@@ -1,8 +1,11 @@
 package dev.lctracker.backend.repo
 
+import dev.lctracker.backend.domain.AuthSession
 import dev.lctracker.backend.domain.Problem
 import dev.lctracker.backend.domain.ReviewSession
 import dev.lctracker.backend.domain.Tag
+import dev.lctracker.backend.domain.User
+import dev.lctracker.backend.domain.UserIdentity
 import dev.lctracker.backend.domain.UserProgress
 import dev.lctracker.backend.domain.UserTopicComfort
 import org.springframework.data.jpa.repository.JpaRepository
@@ -28,3 +31,13 @@ interface ReviewSessionRepository : JpaRepository<ReviewSession, Long> {
     fun findByUserIdAndProblem_IdOrderByCreatedAtDesc(userId: Long, problemId: Long): List<ReviewSession>
     fun findByUserId(userId: Long): List<ReviewSession>
 }
+
+interface UserRepository : JpaRepository<User, Long> {
+    fun findByEmail(email: String): User?
+}
+
+interface UserIdentityRepository : JpaRepository<UserIdentity, Long> {
+    fun findByProviderAndProviderUserId(provider: String, providerUserId: String): UserIdentity?
+}
+
+interface SessionRepository : JpaRepository<AuthSession, String>
