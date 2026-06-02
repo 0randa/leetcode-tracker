@@ -24,3 +24,15 @@ services:
         sync: false
       - key: JAVA_OPTS
         value: -XX:MaxRAMPercentage=70 -XX:+UseSerialGC
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: AUTH_SESSION_SECRET
+        sync: false
+      - key: APP_WEB_ORIGIN
+        sync: false
