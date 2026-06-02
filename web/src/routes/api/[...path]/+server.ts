@@ -24,7 +24,11 @@ async function proxy(event: Parameters<RequestHandler>[0]) {
 	}
 
 	try {
-		const data = await api.request<unknown>(path, { method, body });
+		const data = await api.request<unknown>(path, {
+			method,
+			body,
+			token: event.locals.session.token
+		});
 		return json(data ?? null);
 	} catch (e) {
 		const status = e instanceof ApiError ? e.status : 502;
