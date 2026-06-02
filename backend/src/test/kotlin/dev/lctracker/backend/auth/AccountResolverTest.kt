@@ -9,6 +9,11 @@ class AccountResolverTest {
         assertEquals(AccountResolution.Existing(1000L), r)
     }
 
+    @Test fun `existing identity wins even when the email is unverified`() {
+        val r = AccountResolver.resolve(byIdentity = 1000L, byEmail = 2000L, emailVerified = false)
+        assertEquals(AccountResolution.Existing(1000L), r)
+    }
+
     @Test fun `verified email with no identity links to that user`() {
         val r = AccountResolver.resolve(byIdentity = null, byEmail = 2000L, emailVerified = true)
         assertEquals(AccountResolution.Link(2000L), r)

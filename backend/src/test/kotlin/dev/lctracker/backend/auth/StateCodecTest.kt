@@ -19,6 +19,12 @@ class StateCodecTest {
         assertFalse(codec.verify(state + "x", "google", now))
     }
 
+    @Test fun `tampering the payload half fails`() {
+        val state = codec.sign("google", now)
+        val (payload, sig) = state.split(".")
+        assertFalse(codec.verify("${payload}x.$sig", "google", now))
+    }
+
     @Test fun `a state signed for one provider fails for another`() {
         val state = codec.sign("google", now)
         assertFalse(codec.verify(state, "github", now))
@@ -27,6 +33,11 @@ class StateCodecTest {
     @Test fun `an expired state fails`() {
         val state = codec.sign("google", now)
         assertFalse(codec.verify(state, "google", now.plusSeconds(601)))
+    }
+
+    @Test fun `a state is invalid at exactly its expiry instant`() {
+        val state = codec.sign("google", now)
+        assertFalse(codec.verify(state, "google", now.plusSeconds(600)))
     }
 
     @Test fun `a state signed with a different secret fails`() {
