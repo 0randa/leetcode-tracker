@@ -25,9 +25,11 @@ fun bearerToken(header: String?): String? =
 
 @Component
 class CurrentUserIdArgumentResolver(private val sessions: SessionService) : HandlerMethodArgumentResolver {
+    // The annotation is the marker. We deliberately do NOT type-check: a non-null Kotlin
+    // `Long` param compiles to the JVM primitive `long`, which never equals java.lang.Long,
+    // so a type check here would silently skip the resolver on every endpoint.
     override fun supportsParameter(parameter: MethodParameter): Boolean =
-        parameter.hasParameterAnnotation(CurrentUserId::class.java) &&
-            parameter.parameterType == java.lang.Long::class.java
+        parameter.hasParameterAnnotation(CurrentUserId::class.java)
 
     override fun resolveArgument(
         parameter: MethodParameter,
@@ -35,7 +37,8 @@ class CurrentUserIdArgumentResolver(private val sessions: SessionService) : Hand
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
     ): Any {
-        val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
+        val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Not a servlet request")
         // /api/** already resolved by the interceptor.
         (request.getAttribute(USER_ID_ATTR) as? Long)?.let { return it }
         val token = bearerToken(request.getHeader("Authorization"))
