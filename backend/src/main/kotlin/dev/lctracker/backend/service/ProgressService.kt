@@ -1,6 +1,5 @@
 package dev.lctracker.backend.service
 
-import dev.lctracker.backend.domain.DEFAULT_USER_ID
 import dev.lctracker.backend.domain.Problem
 import dev.lctracker.backend.domain.ProgressStatus
 import dev.lctracker.backend.domain.ReviewSession
@@ -43,17 +42,17 @@ class ProgressService(
         problems.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "No problem $id") }
 
     /** Prior comfort to feed the EMA: the problem's current comfort, else its topic prior. */
-    private fun priorComfort(problem: Problem, progress: UserProgress?): Double {
+    private fun priorComfort(userId: Long, problem: Problem, progress: UserProgress?): Double {
         progress?.comfort?.let { return it }
-        val ratings = topicComfort.findByUserId(DEFAULT_USER_ID).associate { it.tag.name to it.rating }
+        val ratings = topicComfort.findByUserId(userId).associate { it.tag.name to it.rating }
         return problem.tags.mapNotNull { ratings[it.name] }
             .minOfOrNull { Scheduler.topicPrior(it) }
             ?: UNKNOWN_PRIOR
     }
 
-    private fun compute(problem: Problem, progress: UserProgress?, outcome: SessionOutcome, peeked: Boolean): ScheduleResultDto {
+    private fun compute(userId: Long, problem: Problem, progress: UserProgress?, outcome: SessionOutcome, peeked: Boolean): ScheduleResultDto {
         val stage0 = progress?.stage ?: 0
-        val comfort0 = priorComfort(problem, progress)
+        val comfort0 = priorComfort(userId, problem, progress)
         val stage1 = Scheduler.nextStage(stage0, outcome, peeked)
         val comfort1 = Scheduler.nextComfort(comfort0, outcome, peeked)
         val interval = Scheduler.intervalForStage(stage1)
@@ -75,23 +74,24 @@ class ProgressService(
 
     /** Compute what logging this session would do, without persisting. */
     @Transactional(readOnly = true)
-    fun preview(problemId: Long, outcome: SessionOutcome, peeked: Boolean): ScheduleResultDto {
+    fun preview(userId: Long, problemId: Long, outcome: SessionOutcome, peeked: Boolean): ScheduleResultDto {
         val problem = problemOrThrow(problemId)
-        val progress = progressRepo.findByUserIdAndProblem_Id(DEFAULT_USER_ID, problemId)
-        return compute(problem, progress, outcome, peeked)
+        val progress = progressRepo.findByUserIdAndProblem_Id(userId, problemId)
+        return compute(userId, problem, progress, outcome, peeked)
     }
 
     /** Log a session: write history and reschedule the problem from today. */
     @Transactional
-    fun log(problemId: Long, req: LogSessionRequest): ScheduleResultDto {
+    fun log(userId: Long, problemId: Long, req: LogSessionRequest): ScheduleResultDto {
         val problem = problemOrThrow(problemId)
-        val progress = progressRepo.findByUserIdAndProblem_Id(DEFAULT_USER_ID, problemId)
-        val result = compute(problem, progress, req.outcome, req.peeked)
+        val progress = progressRepo.findByUserIdAndProblem_Id(userId, problemId)
+        val result = compute(userId, problem, progress, req.outcome, req.peeked)
         val now = Instant.now()
 
         sessions.save(
             ReviewSession(
                 problem = problem,
+                userId = userId,
                 outcome = req.outcome,
                 peeked = req.peeked,
                 timeTakenMin = req.timeTakenMin,
@@ -103,7 +103,7 @@ class ProgressService(
             ),
         )
 
-        val p = progress ?: UserProgress(problem = problem, createdAt = now)
+        val p = progress ?: UserProgress(problem = problem, userId = userId, createdAt = now)
         p.stage = result.stageTo
         p.comfort = result.comfortTo
         p.status = result.status

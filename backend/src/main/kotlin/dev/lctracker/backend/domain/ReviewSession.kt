@@ -32,7 +32,7 @@ class ReviewSession(
     var peeked: Boolean = false,
 
     @Column(name = "user_id", nullable = false)
-    var userId: Long = DEFAULT_USER_ID,
+    var userId: Long,
 
     @Column(name = "time_taken_min")
     var timeTakenMin: Int? = null,

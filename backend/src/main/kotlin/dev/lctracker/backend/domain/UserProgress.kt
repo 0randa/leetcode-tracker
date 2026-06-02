@@ -29,7 +29,7 @@ class UserProgress(
     val problem: Problem,
 
     @Column(name = "user_id", nullable = false)
-    var userId: Long = DEFAULT_USER_ID,
+    var userId: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)

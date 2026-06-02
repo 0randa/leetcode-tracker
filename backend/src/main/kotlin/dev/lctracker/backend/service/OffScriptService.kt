@@ -1,6 +1,5 @@
 package dev.lctracker.backend.service
 
-import dev.lctracker.backend.domain.DEFAULT_USER_ID
 import dev.lctracker.backend.domain.Difficulty
 import dev.lctracker.backend.domain.Problem
 import dev.lctracker.backend.repo.ProblemRepository
@@ -21,7 +20,7 @@ class OffScriptService(
     private val urlSlug = Regex("""leetcode\.com/problems/([a-z0-9-]+)""", RegexOption.IGNORE_CASE)
 
     @Transactional
-    fun resolve(query: String): ResolveResponse {
+    fun resolve(userId: Long, query: String): ResolveResponse {
         val q = query.trim()
         if (q.isEmpty()) return ResolveResponse(found = false, matches = emptyList(), note = "Enter a URL or problem name")
 
@@ -29,7 +28,7 @@ class OffScriptService(
         urlSlug.find(q)?.groupValues?.get(1)?.let { slug ->
             val match = problems.findBySlug(slug) ?: fetchAndStore(slug)
             return if (match != null) {
-                ResolveResponse(true, listOf(summary(match)), trackingNote(match))
+                ResolveResponse(true, listOf(summary(userId, match)), trackingNote(userId, match))
             } else {
                 ResolveResponse(false, emptyList(), "Couldn't find that one on LeetCode")
             }
@@ -40,16 +39,16 @@ class OffScriptService(
             .filter { it.isActive && it.title.contains(q, ignoreCase = true) }
             .sortedBy { it.id }
             .take(10)
-            .map { summary(it) }
+            .map { summary(userId, it) }
             .toList()
         return ResolveResponse(found = hits.isNotEmpty(), matches = hits)
     }
 
-    private fun summary(p: Problem) =
-        toSummary(p, progressRepo.findByUserIdAndProblem_Id(DEFAULT_USER_ID, p.id))
+    private fun summary(userId: Long, p: Problem) =
+        toSummary(p, progressRepo.findByUserIdAndProblem_Id(userId, p.id))
 
-    private fun trackingNote(p: Problem): String {
-        val progress = progressRepo.findByUserIdAndProblem_Id(DEFAULT_USER_ID, p.id)
+    private fun trackingNote(userId: Long, p: Problem): String {
+        val progress = progressRepo.findByUserIdAndProblem_Id(userId, p.id)
         val date = progress?.nextReviewAt ?: return "Not tracked yet — logging starts its schedule"
         return "Already in review (next $date) — logging reschedules from today"
     }

@@ -1,6 +1,5 @@
 package dev.lctracker.backend.service
 
-import dev.lctracker.backend.domain.DEFAULT_USER_ID
 import dev.lctracker.backend.domain.UserTopicComfort
 import dev.lctracker.backend.repo.TagRepository
 import dev.lctracker.backend.repo.UserTopicComfortRepository
@@ -22,8 +21,8 @@ class OnboardingService(
 
     /** Upsert each topic rating. Re-running onboarding overwrites prior ratings. */
     @Transactional
-    fun submit(req: OnboardingRequest) {
-        val existing = topicComfort.findByUserId(DEFAULT_USER_ID).associateBy { it.tag.name }
+    fun submit(userId: Long, req: OnboardingRequest) {
+        val existing = topicComfort.findByUserId(userId).associateBy { it.tag.name }
         for (r in req.ratings) {
             val tag = tags.findByName(r.category)
                 ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown topic '${r.category}'")
@@ -32,7 +31,7 @@ class OnboardingService(
                 row.rating = r.rating
                 topicComfort.save(row)
             } else {
-                topicComfort.save(UserTopicComfort(tag = tag, rating = r.rating))
+                topicComfort.save(UserTopicComfort(tag = tag, rating = r.rating, userId = userId))
             }
         }
     }

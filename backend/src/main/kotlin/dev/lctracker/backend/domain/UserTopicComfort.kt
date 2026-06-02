@@ -30,7 +30,7 @@ class UserTopicComfort(
     var rating: TopicRating,
 
     @Column(name = "user_id", nullable = false)
-    var userId: Long = DEFAULT_USER_ID,
+    var userId: Long,
 
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant = Instant.now(),

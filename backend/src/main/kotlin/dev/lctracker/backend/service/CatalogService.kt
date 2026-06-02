@@ -1,6 +1,5 @@
 package dev.lctracker.backend.service
 
-import dev.lctracker.backend.domain.DEFAULT_USER_ID
 import dev.lctracker.backend.domain.Difficulty
 import dev.lctracker.backend.domain.ProgressStatus
 import dev.lctracker.backend.domain.Scheduler
@@ -45,9 +44,9 @@ class CatalogService(
 
     /** Today's set: up to 2 most-overdue reviews + new problems backfilling to 3. */
     @Transactional(readOnly = true)
-    fun today(): TodayDto {
+    fun today(userId: Long): TodayDto {
         val today = todayDate()
-        val allProgress = progressRepo.findByUserId(DEFAULT_USER_ID)
+        val allProgress = progressRepo.findByUserId(userId)
         val progressByProblem = allProgress.associateBy { it.problem.id }
 
         val dueReviews = allProgress
@@ -57,7 +56,7 @@ class CatalogService(
             .take(MAX_REVIEWS)
 
         val newNeeded = DAILY_SET_SIZE - dueReviews.size
-        val ratings = topicComfort.findByUserId(DEFAULT_USER_ID).associate { it.tag.name to it.rating }
+        val ratings = topicComfort.findByUserId(userId).associate { it.tag.name to it.rating }
         val newCandidates = problems.findAll()
             .filter { it.isActive && it.id !in progressByProblem.keys }
             // weighted toward weaker topics: lower prior first, then stable by id
@@ -79,15 +78,15 @@ class CatalogService(
             reviewCount = dueReviews.size,
             newCount = newCandidates.size,
             estimatedMinutes = cards.size * MINUTES_PER_CARD,
-            streak = stats.streak(),
-            totalSolved = stats.totalSolved(),
+            streak = stats.streak(userId),
+            totalSolved = stats.totalSolved(userId),
             set = cards,
         )
     }
 
     @Transactional(readOnly = true)
-    fun list(search: String?, topic: String?, difficulty: Difficulty?, status: ProgressStatus?): List<ProblemSummaryDto> {
-        val progressByProblem = progressRepo.findByUserId(DEFAULT_USER_ID).associateBy { it.problem.id }
+    fun list(userId: Long, search: String?, topic: String?, difficulty: Difficulty?, status: ProgressStatus?): List<ProblemSummaryDto> {
+        val progressByProblem = progressRepo.findByUserId(userId).associateBy { it.problem.id }
         return problems.findAll().asSequence()
             .filter { it.isActive }
             .map { toSummary(it, progressByProblem[it.id]) }
@@ -100,11 +99,11 @@ class CatalogService(
     }
 
     @Transactional(readOnly = true)
-    fun detail(id: Long): ProblemDetailDto {
+    fun detail(userId: Long, id: Long): ProblemDetailDto {
         val problem = problems.findById(id)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "No problem $id") }
-        val progress = progressRepo.findByUserIdAndProblem_Id(DEFAULT_USER_ID, id)
-        val history = sessions.findByUserIdAndProblem_IdOrderByCreatedAtDesc(DEFAULT_USER_ID, id)
+        val progress = progressRepo.findByUserIdAndProblem_Id(userId, id)
+        val history = sessions.findByUserIdAndProblem_IdOrderByCreatedAtDesc(userId, id)
         // comfort trend oldest → newest, for the sparkline/dots
         val trend = history.reversed().mapNotNull { it.comfortAfter }
         val nextReview = progress?.reviewDate()?.let { Scheduler.dueInfo(it, todayDate()).toDto() }
