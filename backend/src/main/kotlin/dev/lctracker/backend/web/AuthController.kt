@@ -43,7 +43,13 @@ class AuthController(
         if (!stateCodec.verify(req.state, provider, Instant.now())) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid state")
         }
-        val profile = oauth.exchange(provider, req.code)
+        val profile = try {
+            oauth.exchange(provider, req.code)
+        } catch (e: Exception) {
+            // Provider/network failure during the code exchange — surface a clean 502
+            // (the web BFF maps this to a friendly "sign-in failed" rather than leaking a 500).
+            throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Sign-in failed during token exchange")
+        }
         val result = auth.upsert(profile)
         val session = sessions.create(result.userId, Instant.now())
         return CallbackResponse(session.token, session.expiresAt, result.isNew)
