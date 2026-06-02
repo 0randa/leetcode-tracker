@@ -24,8 +24,12 @@
 		<div class="track"><div class="fill" style="width:{pct * 100}%"></div></div>
 		<span class="frac">{done}/{total}</span>
 	</div>
-	<!-- Reserved Settings slot — dimmed and inert for the MVP. -->
-	<span class="gear"><Icon name="gear" size={18} color="var(--ink3)" /></span>
+	<!-- Reserved Settings slot — temporary Sign out until a Settings screen exists. -->
+	<form method="POST" action="/auth/logout" class="gear-form">
+		<button class="gear" type="submit" aria-label="Sign out">
+			<Icon name="gear" size={18} color="var(--ink3)" />
+		</button>
+	</form>
 </div>
 
 <style>
@@ -82,8 +86,19 @@
 		font-weight: 600;
 		color: var(--ink2);
 	}
+	.gear-form {
+		display: inline-flex;
+	}
 	.gear {
 		opacity: 0.4;
 		display: inline-flex;
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		transition: opacity 0.12s ease;
+	}
+	.gear:hover {
+		opacity: 0.75;
 	}
 </style>
