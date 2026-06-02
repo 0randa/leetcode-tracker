@@ -32,5 +32,6 @@ auth:
   google-client-secret: ${GOOGLE_CLIENT_SECRET:}
   github-client-id: ${GITHUB_CLIENT_ID:}
   github-client-secret: ${GITHUB_CLIENT_SECRET:}
+  # MUST be overridden in production — signs OAuth state and scopes sessions.
   session-secret: ${AUTH_SESSION_SECRET:dev-insecure-secret-change-me}
   web-origin: ${APP_WEB_ORIGIN:http://localhost:5173}

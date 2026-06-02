@@ -25,7 +25,10 @@ data class OAuthProfile(
  */
 @Component
 class OAuthClient(private val props: AuthProperties) {
-    private val http: RestClient = RestClient.builder().build()
+    private val http: RestClient = RestClient.builder()
+        // GitHub's REST API rejects requests without a User-Agent (403); harmless for Google.
+        .defaultHeader("User-Agent", "lctracker/1.0")
+        .build()
 
     fun authorizeUrl(provider: String, state: String): String = when (provider) {
         "google" -> buildUrl(
@@ -82,10 +85,11 @@ class OAuthClient(private val props: AuthProperties) {
             .retrieve()
             .body(TokenResponse::class.java)
             ?: error("Google token exchange returned no body")
+        val accessToken = token.accessToken ?: error("Google token response had no access_token")
 
         val info = http.get()
             .uri("https://openidconnect.googleapis.com/v1/userinfo")
-            .header("Authorization", "Bearer ${token.accessToken}")
+            .header("Authorization", "Bearer $accessToken")
             .retrieve()
             .body(GoogleUserInfo::class.java)
             ?: error("Google userinfo returned no body")
@@ -116,10 +120,11 @@ class OAuthClient(private val props: AuthProperties) {
             .retrieve()
             .body(TokenResponse::class.java)
             ?: error("GitHub token exchange returned no body")
+        val accessToken = token.accessToken ?: error("GitHub token response had no access_token")
 
         val user = http.get()
             .uri("https://api.github.com/user")
-            .header("Authorization", "Bearer ${token.accessToken}")
+            .header("Authorization", "Bearer $accessToken")
             .header("Accept", "application/vnd.github+json")
             .retrieve()
             .body(GitHubUser::class.java)
@@ -127,7 +132,7 @@ class OAuthClient(private val props: AuthProperties) {
 
         val emails = http.get()
             .uri("https://api.github.com/user/emails")
-            .header("Authorization", "Bearer ${token.accessToken}")
+            .header("Authorization", "Bearer $accessToken")
             .header("Accept", "application/vnd.github+json")
             .retrieve()
             .body(Array<GitHubEmail>::class.java)

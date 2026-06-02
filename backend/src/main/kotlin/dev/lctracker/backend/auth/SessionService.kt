@@ -29,13 +29,12 @@ class SessionService(private val sessions: SessionRepository) {
     fun resolve(token: String, now: Instant): Long? {
         val s = sessions.findById(token).orElse(null) ?: return null
         if (!s.expiresAt.isAfter(now)) return null
-        s.lastSeenAt = now
-        sessions.save(s)
+        s.lastSeenAt = now // managed entity — flushed on commit
         return s.userId
     }
 
     @Transactional
     fun delete(token: String) {
-        if (sessions.existsById(token)) sessions.deleteById(token)
+        sessions.deleteById(token) // no-op if already gone
     }
 }

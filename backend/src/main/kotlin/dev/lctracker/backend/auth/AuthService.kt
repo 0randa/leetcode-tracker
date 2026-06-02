@@ -20,7 +20,8 @@ class AuthService(
     fun upsert(profile: OAuthProfile): UpsertResult {
         val byIdentity = identities
             .findByProviderAndProviderUserId(profile.provider, profile.providerUserId)?.userId
-        val byEmail = profile.email?.let { users.findByEmail(it)?.id }
+        // Only look up by email when the identity is unknown (no wasted query on the hot path).
+        val byEmail = if (byIdentity == null) profile.email?.let { users.findByEmail(it)?.id } else null
 
         return when (val decision = AccountResolver.resolve(byIdentity, byEmail, profile.emailVerified)) {
             is AccountResolution.Existing -> UpsertResult(decision.userId, isNew = false)
