@@ -54,6 +54,25 @@ The datasource is env-driven (defaults target local Docker). For Neon, set:
 
 See `.env.example`.
 
+### Auth / OAuth env
+
+Auth is now wired (supersedes the "no auth is wired" note below): real backend-owned
+Google/GitHub OAuth with opaque server-side sessions. The backend holds the client
+secrets, performs the code exchange, upserts the user, and issues the session token.
+Set these (git-ignored `backend/.env` locally; Render dashboard / Vercel in prod):
+
+| Env var               | Notes                                                        |
+| --------------------- | ------------------------------------------------------------ |
+| `GOOGLE_CLIENT_ID`     | Google OAuth web client id                                   |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth web client secret                               |
+| `GITHUB_CLIENT_ID`     | GitHub OAuth app client id                                   |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth app client secret                               |
+| `AUTH_SESSION_SECRET`  | Long random string; HMAC key for the signed OAuth `state`    |
+| `APP_WEB_ORIGIN`       | Web origin for redirect URIs, e.g. `http://localhost:5173`   |
+
+Dev redirect URIs to register: `http://localhost:5173/auth/google/callback` and
+`.../auth/github/callback`. Full design: `docs/superpowers/specs/2026-06-02-oauth-signin-design.md`.
+
 ## Schema (Flyway `V1__init.sql`)
 
 Six tables. `problems` is keyed on the **numeric LeetCode id** so upstream renames

@@ -46,6 +46,18 @@ server…" error page rather than hanging.
 |---|---|
 | `SPRING_API_BASE` | Private, server-only. e.g. `https://lctracker-backend.onrender.com`. The browser never sees it. |
 
+## Auth / OAuth
+
+Sign-in is real backend-owned Google/GitHub OAuth (BFF relay). The browser only
+talks to SvelteKit: `signin` actions ask Spring for the consent URL, the provider
+returns to `routes/auth/[provider]/callback`, and the opaque session token lives in
+an httpOnly `session` cookie forwarded to Spring as `Authorization: Bearer`. The
+**OAuth client secrets live on the backend**, not here — see `backend/.env.example`
+and the spec `docs/superpowers/specs/2026-06-02-oauth-signin-design.md`.
+
+Dev redirect URIs to register on the provider apps:
+`http://localhost:5173/auth/google/callback` and `.../auth/github/callback`.
+
 ## Deploy (Vercel)
 
 1. New Vercel project → import the GitHub repo → set **Root Directory = `web`**.
