@@ -17,7 +17,7 @@ import java.time.Instant
 )
 class UserIdentity(
     @Column(name = "user_id", nullable = false)
-    var userId: Long,
+    val userId: Long,
 
     @Column(nullable = false)
     var provider: String,
@@ -29,7 +29,7 @@ class UserIdentity(
     var email: String? = null,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: Instant = Instant.now(),
+    val createdAt: Instant = Instant.now(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

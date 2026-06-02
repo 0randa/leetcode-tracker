@@ -22,7 +22,7 @@ class User(
     var avatarUrl: String? = null,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: Instant = Instant.now(),
+    val createdAt: Instant = Instant.now(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
