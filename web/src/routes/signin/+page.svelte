@@ -1,11 +1,6 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-
-	// First-run sign-in screen ("refined", evolved from wireframe A · Minimal):
-	// calm centered identity block, a soft accent wash from the top, the </> tile
-	// tinted with the single signal accent, brand-correct provider buttons, and a
-	// secondary "Continue as guest" path. Auth itself is a seam (see session.ts);
-	// every button just marks the device signed-in and moves on to onboarding.
+	// First-run sign-in. Provider buttons do a native form POST (the action issues an
+	// external 303 to the provider's consent page, which use:enhance can't follow).
 	let submitting = $state<string | null>(null);
 </script>
 
@@ -21,20 +16,11 @@
 			</div>
 		</div>
 
-		<form
-			method="POST"
-			class="actions"
-			use:enhance={({ submitter }) => {
-				submitting = submitter?.getAttribute('formaction') ?? 'pending';
-				return async ({ update }) => {
-					await update();
-					submitting = null;
-				};
-			}}
-		>
+		<form method="POST" class="actions">
 			<button
 				class="provider google"
 				formaction="?/google"
+				onclick={() => (submitting = 'google')}
 				disabled={submitting !== null}
 			>
 				<span class="logo">
@@ -63,6 +49,7 @@
 			<button
 				class="provider github"
 				formaction="?/github"
+				onclick={() => (submitting = 'github')}
 				disabled={submitting !== null}
 			>
 				<span class="logo">
@@ -74,17 +61,6 @@
 				</span>
 				Continue with GitHub
 			</button>
-
-			<div class="divider" aria-hidden="true">
-				<span class="line"></span>
-				<span class="or">OR</span>
-				<span class="line"></span>
-			</div>
-
-			<button class="guest" formaction="?/guest" disabled={submitting !== null}>
-				Continue as guest
-			</button>
-			<div class="guest-note">Guest progress saves on this device only.</div>
 
 			<p class="legal">
 				By continuing you agree to the <span class="u">Terms</span> &amp;
@@ -205,62 +181,15 @@
 		color: #fff;
 	}
 
-	.provider:not(:disabled):hover,
-	.guest:not(:disabled):hover {
+	.provider:not(:disabled):hover {
 		filter: brightness(0.985);
 	}
-	.provider:not(:disabled):active,
-	.guest:not(:disabled):active {
+	.provider:not(:disabled):active {
 		transform: scale(0.985);
 	}
-	.provider:disabled,
-	.guest:disabled {
+	.provider:disabled {
 		opacity: 0.6;
 		cursor: default;
-	}
-
-	/* guest path */
-	.divider {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		margin: 5px 0 1px;
-	}
-	.divider .line {
-		flex: 1;
-		height: 1px;
-		background: var(--line2);
-	}
-	.divider .or {
-		font-family: var(--mono);
-		font-size: 10px;
-		font-weight: 500;
-		color: var(--ink3);
-		letter-spacing: 0.12em;
-	}
-
-	.guest {
-		width: 100%;
-		height: 46px;
-		border-radius: 12px;
-		background: transparent;
-		border: 1px solid var(--line);
-		color: var(--ink2);
-		font-family: var(--sans);
-		font-size: 14px;
-		font-weight: 600;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: transform 0.12s ease, filter 0.12s ease;
-	}
-	.guest-note {
-		font-family: var(--mono);
-		font-size: 10.5px;
-		line-height: 1.4;
-		color: var(--ink3);
-		text-align: center;
-		margin-top: 1px;
 	}
 
 	.legal {
