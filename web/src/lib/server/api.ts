@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 // The single typed wrapper around the Spring backend. The browser never calls
 // Spring directly — only this server module knows SPRING_API_BASE. When auth
@@ -26,6 +26,8 @@ interface ApiOptions {
 	method?: string;
 	query?: Record<string, string | number | undefined | null>;
 	body?: unknown;
+	/** Bearer token forwarded to Spring (the one auth-injection seam). */
+	token?: string | null;
 	/** Pass through a SvelteKit load/action fetch if you want it tracked. */
 	fetchFn?: typeof fetch;
 }
@@ -46,7 +48,10 @@ async function request<T>(path: string, opts: ApiOptions = {}): Promise<T> {
 	try {
 		res = await f(url, {
 			method: opts.method ?? 'GET',
-			headers: opts.body !== undefined ? { 'content-type': 'application/json' } : undefined,
+			headers: {
+				...(opts.body !== undefined ? { 'content-type': 'application/json' } : {}),
+				...(opts.token ? { authorization: `Bearer ${opts.token}` } : {})
+			},
 			body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
 			signal: controller.signal
 		});
@@ -74,7 +79,10 @@ async function request<T>(path: string, opts: ApiOptions = {}): Promise<T> {
 
 /** Turn an ApiError into a SvelteKit `error()` for load() functions. */
 export function apiToHttp(e: unknown): never {
-	if (e instanceof ApiError) throw error(e.status >= 500 ? e.status : 502, e.message);
+	if (e instanceof ApiError) {
+		if (e.status === 401) throw redirect(303, '/signin');
+		throw error(e.status >= 500 ? e.status : 502, e.message);
+	}
 	throw error(502, 'Unexpected server error.');
 }
 

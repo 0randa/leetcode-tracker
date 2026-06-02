@@ -22,36 +22,63 @@ export interface ProblemFilters {
 	[key: string]: string | undefined;
 }
 
+export interface AuthStart {
+	authorizeUrl: string;
+	state: string;
+}
+export interface AuthCallbackResult {
+	token: string;
+	expiresAt: string;
+	isNewUser: boolean;
+}
+export interface AuthMe {
+	userId: number;
+	email: string | null;
+	name: string | null;
+	avatarUrl: string | null;
+}
+
 export const backend = {
-	today: (f?: typeof fetch) => api.request<Today>('/api/today', { fetchFn: f }),
+	today: (token: string | null, f?: typeof fetch) =>
+		api.request<Today>('/api/today', { token, fetchFn: f }),
 
-	problems: (filters: ProblemFilters = {}, f?: typeof fetch) =>
-		api.request<ProblemSummary[]>('/api/problems', { query: filters, fetchFn: f }),
+	problems: (token: string | null, filters: ProblemFilters = {}, f?: typeof fetch) =>
+		api.request<ProblemSummary[]>('/api/problems', { query: filters, token, fetchFn: f }),
 
-	detail: (id: number, f?: typeof fetch) =>
-		api.request<ProblemDetail>(`/api/problems/${id}`, { fetchFn: f }),
+	detail: (token: string | null, id: number, f?: typeof fetch) =>
+		api.request<ProblemDetail>(`/api/problems/${id}`, { token, fetchFn: f }),
 
-	topics: (f?: typeof fetch) => api.request<string[]>('/api/topics', { fetchFn: f }),
+	topics: (token: string | null, f?: typeof fetch) =>
+		api.request<string[]>('/api/topics', { token, fetchFn: f }),
 
-	analytics: (f?: typeof fetch) => api.request<Analytics>('/api/analytics', { fetchFn: f }),
+	analytics: (token: string | null, f?: typeof fetch) =>
+		api.request<Analytics>('/api/analytics', { token, fetchFn: f }),
 
-	resolve: (query: string, f?: typeof fetch) =>
-		api.request<ResolveResponse>('/api/resolve', { query: { query }, fetchFn: f }),
+	resolve: (token: string | null, query: string, f?: typeof fetch) =>
+		api.request<ResolveResponse>('/api/resolve', { query: { query }, token, fetchFn: f }),
 
-	logSession: (id: number, body: LogSessionRequest, f?: typeof fetch) =>
-		api.request<ScheduleResult>(`/api/problems/${id}/sessions`, {
+	logSession: (token: string | null, id: number, body: LogSessionRequest, f?: typeof fetch) =>
+		api.request<ScheduleResult>(`/api/problems/${id}/sessions`, { method: 'POST', body, token, fetchFn: f }),
+
+	previewSession: (token: string | null, id: number, body: LogSessionRequest, f?: typeof fetch) =>
+		api.request<ScheduleResult>(`/api/problems/${id}/sessions/preview`, { method: 'POST', body, token, fetchFn: f }),
+
+	submitOnboarding: (token: string | null, body: OnboardingRequest, f?: typeof fetch) =>
+		api.request<void>('/api/onboarding', { method: 'POST', body, token, fetchFn: f }),
+
+	// ---- auth (no bearer needed for start/callback) ----
+	authStart: (provider: string, f?: typeof fetch) =>
+		api.request<AuthStart>(`/auth/${provider}/start`, { fetchFn: f }),
+
+	authCallback: (provider: string, code: string, state: string, f?: typeof fetch) =>
+		api.request<AuthCallbackResult>(`/auth/${provider}/callback`, {
 			method: 'POST',
-			body,
+			body: { code, state },
 			fetchFn: f
 		}),
 
-	previewSession: (id: number, body: LogSessionRequest, f?: typeof fetch) =>
-		api.request<ScheduleResult>(`/api/problems/${id}/sessions/preview`, {
-			method: 'POST',
-			body,
-			fetchFn: f
-		}),
+	authMe: (token: string, f?: typeof fetch) => api.request<AuthMe>('/auth/me', { token, fetchFn: f }),
 
-	submitOnboarding: (body: OnboardingRequest, f?: typeof fetch) =>
-		api.request<void>('/api/onboarding', { method: 'POST', body, fetchFn: f })
+	authLogout: (token: string, f?: typeof fetch) =>
+		api.request<void>('/auth/logout', { method: 'POST', token, fetchFn: f })
 };
