@@ -14,7 +14,7 @@
 	];
 
 	const path = $derived($page.url.pathname);
-	const showNav = $derived(!path.startsWith('/onboarding'));
+	const showNav = $derived(!path.startsWith('/onboarding') && !path.startsWith('/signin'));
 
 	function isActive(href: string): boolean {
 		if (href === '/') return path === '/';
